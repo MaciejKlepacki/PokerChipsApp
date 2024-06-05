@@ -1,13 +1,11 @@
 .container {
-  /* width: 400px; */
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   justify-content: center;
 }
 
 .box {
   display: flex;
-  /* flex: 1; */
   height: 500px;
   width: 250px;
   border: 1px solid #000;
@@ -18,7 +16,8 @@
   flex-direction: column;
 }
 
-h1 {
+h1,
+h2 {
   justify-content: center;
   align-items: center;
   display: flex;
@@ -35,11 +34,6 @@ input {
   width: 93px;
 }
 
-.money-display {
-  border: 5px;
-  border-color: #000;
+body {
+  font-family: Georgia, 'Times New Roman', Times, serif;
 }
-
-/* #player-2 {
-    background-color: green;
-} */
