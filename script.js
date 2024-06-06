@@ -95,11 +95,7 @@ const gameStart = function () {
   updateValues();
   poolDisplayFunction(pool);
 };
-// const changeColor = function () {
-//   for (let i = 0; i < numOfPlayers; i++) {
-//     if (loose[i] == true) opacity0(i);
-//   }
-// };
+
 const checkStatus = function () {
   for (let i = 0; i < numOfPlayers; i++) {
     if (moneyOnTable[i] == 0 && totalMoney[i] == 0) {
