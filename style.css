@@ -53,4 +53,10 @@ button:hover {
 
 body {
   font-family: Georgia, 'Times New Roman', Times, serif;
+  /* color: rgb(210, 80, 102); */
+}
+
+#whoWin {
+  justify-content: center;
+  align-items: center;
 }

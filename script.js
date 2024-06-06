@@ -1,10 +1,10 @@
 'use strict';
 
 // main
-const currentPlayerDisplayIndex = document.querySelector('#current-player');
-const currentRoundDisplayIndex = document.querySelector('#current-round');
 const poolDisplayIndex = document.querySelector('#current-pool');
 const containerIndex = document.querySelector('.container');
+const whoWinContainerIndex = document.querySelector('#whoWin');
+const blindAllIndex = document.querySelector('#blind-all');
 
 // index arrays
 let boxIndex = [];
@@ -15,49 +15,50 @@ let callButtonIndex = [];
 let raiseInputIndex = [];
 let raiseButtonIndex = [];
 let allInButtonIndex = [];
+let whoWinIndex = [];
 
 // setting amount of money on the start
 // const startMoney = prompt('How much money do you want?')
 // console.log(startMoney);
 
-const smallBlind = 5;
-const bigBlind = 10;
+const blind = 10;
 const numOfPlayers = 4;
 const playersName = ['Maciek', 'Ania', 'Zosia', 'Gocha'];
 let moneyOnTable = [];
 let totalMoney = [];
 const moneyOnStart = 500;
 let pool;
-let currentRound = ['Big and small blind', 'Preflop', 'Flop', 'turn'];
-let currentPlayer = 0;
+let readyToFinishRound = new Array(numOfPlayers).fill(false);
+let loose = new Array(numOfPlayers).fill(false);
+let call = new Array(numOfPlayers).fill(false);
+let fold = new Array(numOfPlayers).fill(false);
+let allIn = new Array(numOfPlayers).fill(false);
 
 // creating boxes and DOM
 const creatingBoxes = function (x) {
-  let html = ``;
+  let containerHTML = ``;
+  let whoWin = ``;
   for (let i = 0; i <= x; i++) {
     // playersName.push(`Player ${i}`);
     // playersName[i] = prompt(`Name of ${i + 1} player`);
-    html += `<div class="box" id="player-${i}">
+    containerHTML += `<div class="box" id="player-${i}">
     <!--PLAYER ${i} -->
     <p>${playersName[i]}</p>
     <p class="money-display" id="money-display-${i}">7834</p>
     <p class="money-on-table" id="money-on-table-${i}">1000</p>
-    <button class="fold" id="fold-${i}">fold</button>
-    <button class="call" id="call-${i}">call/check/blind</button>
-    <input
-      class="raise-input"
-      id="raise-input-${i}"
-      type="number"
-      placeholder="Raise"
-    />
-    <button class="raise" id="raise-${i}">raise</button>
-    <button class="all-in" id="all-in-${i}">all in</button>
-  </div>`;
+    <button class="fold" id="fold-${i}">Fold</button>
+    <button class="call" id="call-${i}">Call/Check</button>
+    <input class="raise-input" id="raise-input-${i}" type="number" placeholder="Raise"/>
+    <button class="raise" id="raise-${i}">Raise</button>
+    <button class="all-in" id="all-in-${i}">All In</button></div>`;
+    whoWin += `<button id="win-button-${i}">${playersName[i]}</button>`;
   }
-  containerIndex.innerHTML = html;
+  containerIndex.innerHTML = containerHTML;
+  whoWinContainerIndex.innerHTML = whoWin;
   for (let i = 0; i <= x; i++) {
     totalMoney.push(moneyOnStart);
     moneyOnTable.push(0);
+    whoWinIndex.push(document.getElementById(`win-button-${i}`));
     boxIndex.push(document.getElementById(`player-${i}`));
     totalMoneyIndex.push(document.getElementById(`money-display-${i}`));
     moneyOnTableIndex.push(document.getElementById(`money-on-table-${i}`));
@@ -69,84 +70,126 @@ const creatingBoxes = function (x) {
   }
 };
 
-// function to start a game
+const updateValues = () => {
+  totalMoneyIndex.forEach((i, x) => (i.innerHTML = totalMoney[x]));
+  moneyOnTableIndex.forEach((i, x) => (i.innerHTML = moneyOnTable[x]));
+  pool = summingPool();
+  poolDisplayFunction(pool);
+};
+const changeMoney = function (q, indexOfButton) {
+  moneyOnTable[indexOfButton] += q;
+  totalMoney[indexOfButton] -= q;
+  updateValues();
+};
+const summingPool = () => {
+  return moneyOnTable.reduce((sum, current) => {
+    if (typeof current === 'number') {
+      return sum + current;
+    }
+    return sum;
+  }, 0);
+};
+const poolDisplayFunction = x => (poolDisplayIndex.innerHTML = `Pool: ${x}`);
 const gameStart = function () {
   pool = 0;
-  totalMoneyIndex.forEach(i => (i.innerHTML = moneyOnStart));
-  moneyOnTableIndex.forEach(i => (i.innerHTML = 0));
+  updateValues();
   poolDisplayFunction(pool);
-  currentPlayerDisplayFunction(currentPlayer);
-  currentRoundDisplayFunction(currentRound[0]);
-  currentPlayerDisplayFunction(playersName[currentPlayer]);
 };
-
-// displaying functions
-const poolDisplayFunction = x => (poolDisplayIndex.innerHTML = `Pool: ${x}`);
-const currentPlayerDisplayFunction = x =>
-  (currentPlayerDisplayIndex.innerHTML = `Current player: ${x}`);
-const currentRoundDisplayFunction = x =>
-  (currentRoundDisplayIndex.innerHTML = `Round: ${x}`);
-const greenBox = x => (boxIndex[x].style.backgroundColor = 'lightgreen');
-const whiteBox = x => (boxIndex[x].style.backgroundColor = 'white');
-
-// ROUND 1 - SMALL BLIND
-// const smallBlindFunction = function () {
-//   greenBox(currentPlayer);
-//   console.log(currentPlayer);
-//   callButtonIndex[currentPlayer].addEventListener('click', smallBlindListener);
+// const changeColor = function () {
+//   for (let i = 0; i < numOfPlayers; i++) {
+//     if (loose[i] == true) opacity0(i);
+//   }
 // };
-
-// const smallBlindListener = function () {
-//   totalMoney[currentPlayer] -= smallBlind;
-//   totalMoneyIndex[currentPlayer].innerHTML = totalMoney[currentPlayer];
-//   moneyOnTableIndex[currentPlayer].innerHTML = smallBlind;
-//   whiteBox(currentPlayer);
-//   currentPlayer++;
-//   greenBox(currentPlayer);
-//   callButtonIndex[currentPlayer - 1].removeEventListener(
-//     'click',
-//     smallBlindListener
-//   );
-//   while (currentPlayer > 4) bigBlindFunction();
-//   console.log(currentPlayer);
-// };
-
-// // ROUND 1 - BIG BLIND
-// const bigBlindFunction = function () {
-//   console.log(currentPlayer);
-//   callButtonIndex[currentPlayer].addEventListener('click', bigBlindListener);
-// };
-
-// const bigBlindListener = function () {
-//   totalMoney[currentPlayer] -= bigBlind;
-//   totalMoneyIndex[currentPlayer].innerHTML = totalMoney[currentPlayer];
-//   moneyOnTableIndex[currentPlayer].innerHTML = bigBlind;
-//   whiteBox(currentPlayer);
-//   currentPlayer++;
-//   greenBox(currentPlayer);
-//   callButtonIndex[currentPlayer - 1].removeEventListener(
-//     'click',
-//     bigBlindListener
-//   );
-// };
-/////////////////////////////////////
-
-// const smallBlindFunction = async () => {
-//   await new Promise(resolve => {
-//     callButtonIndex[currentPlayer].addEventListener('click', resolve);
-//   });
-//   console.log(currentPlayer);
-//   currentPlayer++;
-//   callButtonIndex[currentPlayer].addEventListener('click', () => {
-//     // Kod dla drugiego przycisku.
-//     console.log('tata');
-//   });
-// };
+const checkStatus = function () {
+  for (let i = 0; i < numOfPlayers; i++) {
+    if (moneyOnTable[i] == 0 && totalMoney[i] == 0) {
+      //loose
+      loose[i] = true;
+      opacity0(i);
+      // totalMoney[i] = undefined;
+      // moneyOnTable[i] = undefined;
+      whoWinIndex[i] = undefined;
+      boxIndex[i] = undefined;
+      // moneyOnTableIndex[i] = undefined;
+      foldButtonIndex[i] = undefined;
+      callButtonIndex[i] = undefined;
+      raiseInputIndex[i] = undefined;
+      raiseButtonIndex[i] = undefined;
+      allInButtonIndex[i] = undefined;
+      moneyOnTable[i] = undefined;
+      totalMoney[i] = undefined;
+    } else if (fold[i] == true) {
+      redBox(i);
+    } else if (allIn[i] == true) {
+      greenBox(i);
+    }
+  }
+};
+const greenBox = w => (boxIndex[w].style.backgroundColor = 'lightgreen');
+const whiteBox = w => (boxIndex[w].style.backgroundColor = 'white');
+const redBox = w => (boxIndex[w].style.backgroundColor = 'rgb(210, 80, 102)');
+const opacity0 = w => (boxIndex[w].style.opacity = 0);
 
 /////////////////////////////////////
 
+/////////////////////////////////////
 creatingBoxes(numOfPlayers - 1);
 gameStart();
-smallBlindFunction();
-// smallBlindFunction();
-// boxIndex[2].style.color = 'blue';playersName
+/////////////////////////////////////
+
+/////////////////////////////////////
+
+// Fold buttons
+foldButtonIndex.forEach((buttonIndex, indexOfButton) => {
+  buttonIndex.addEventListener('click', function () {
+    readyToFinishRound[indexOfButton] = true;
+    fold[indexOfButton] = true;
+    checkStatus();
+  });
+});
+
+// Raise buttons
+raiseButtonIndex.forEach((buttonIndex, indexOfButton) => {
+  buttonIndex.addEventListener('click', function () {
+    const raiseInput = Number(raiseInputIndex[indexOfButton].value);
+    if (raiseInput > 0) {
+      console.log(raiseInput);
+      raiseInputIndex[indexOfButton].value = '';
+      changeMoney(raiseInput, indexOfButton);
+      call[indexOfButton] = true;
+    }
+  });
+});
+
+// All In buttons
+allInButtonIndex.forEach((buttonIndex, indexOfButton) => {
+  buttonIndex.addEventListener('click', function () {
+    changeMoney(totalMoney[indexOfButton], indexOfButton);
+    readyToFinishRound[indexOfButton] = true;
+    allIn[indexOfButton] = true;
+    checkStatus();
+  });
+});
+
+// All blind button
+blindAllIndex.addEventListener('click', function () {
+  totalMoney = totalMoney.map(i => i - blind);
+  moneyOnTable = moneyOnTable.map(i => i + blind);
+  // summingPool();
+  updateValues();
+});
+
+// Who won the round?
+whoWinIndex.forEach((buttonIndex, indexOfButton) => {
+  buttonIndex.addEventListener('click', function () {
+    totalMoney[indexOfButton] += pool;
+    pool = 0;
+    moneyOnTable = new Array(numOfPlayers).fill(0);
+    call = new Array(numOfPlayers).fill(false);
+    fold = new Array(numOfPlayers).fill(false);
+    allIn = new Array(numOfPlayers).fill(false);
+    updateValues();
+    checkStatus();
+    // changeColor();
+  });
+});
