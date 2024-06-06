@@ -110,14 +110,6 @@ const checkStatus = function () {
       // totalMoney[i] = undefined;
       // moneyOnTable[i] = undefined;
       whoWinIndex[i].style.visibility = 'hidden';
-      whoWinIndex[i] = undefined;
-      boxIndex[i] = undefined;
-      // moneyOnTableIndex[i] = undefined;
-      foldButtonIndex[i] = undefined;
-      callButtonIndex[i] = undefined;
-      raiseInputIndex[i] = undefined;
-      raiseButtonIndex[i] = undefined;
-      allInButtonIndex[i] = undefined;
       moneyOnTable[i] = undefined;
       totalMoney[i] = undefined;
     } else if (fold[i] == true) {
@@ -190,6 +182,7 @@ raiseButtonIndex.forEach((buttonIndex, indexOfButton) => {
       changeMoney(raiseInput, indexOfButton);
       call[indexOfButton] = true;
       checkStatus();
+      blindAllIndex.style.visibility = 'hidden';
     }
   });
 });
@@ -202,6 +195,7 @@ allInButtonIndex.forEach((buttonIndex, indexOfButton) => {
     readyToFinishRound[indexOfButton] = true;
     allIn[indexOfButton] = true;
     checkStatus();
+    blindAllIndex.style.visibility = 'hidden';
   });
 });
 
@@ -228,6 +222,6 @@ whoWinIndex.forEach((buttonIndex, indexOfButton) => {
     allIn = new Array(numOfPlayers).fill(false);
     updateValues();
     checkStatus();
-    // changeColor();
+    blindAllIndex.style.visibility = 'visible';
   });
 });
