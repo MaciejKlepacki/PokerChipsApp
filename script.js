@@ -5,6 +5,9 @@ const poolDisplayIndex = document.querySelector('#current-pool');
 const containerIndex = document.querySelector('.container');
 const whoWinContainerIndex = document.querySelector('#whoWin');
 const blindAllIndex = document.querySelector('#blind-all');
+const containerWinnersIndex = document.querySelector('#container-winners');
+const nextRoundButtonIndex = document.querySelector('#next-round');
+const currentPhaseIndex = document.querySelector('#current-phase');
 
 // index arrays
 let boxIndex = [];
@@ -24,6 +27,14 @@ let whoWinIndex = [];
 const blind = 10;
 const numOfPlayers = 4;
 const playersName = ['Maciek', 'Ania', 'Zosia', 'Gocha'];
+let currentPhase = 0;
+const phases = [
+  'Blind',
+  'flop (3 cards on the table)',
+  'turn (4 cards on the table)',
+  'river (5 cards on the table)',
+  'Winner?',
+];
 let moneyOnTable = [];
 let totalMoney = [];
 const moneyOnStart = 500;
@@ -93,13 +104,11 @@ const poolDisplayFunction = x => (poolDisplayIndex.innerHTML = `Pool: ${x}`);
 const gameStart = function () {
   pool = 0;
   updateValues();
+  containerWinnersIndex.style.visibility = 'hidden';
+  nextRoundButtonIndex.style.visibility = 'hidden';
   poolDisplayFunction(pool);
 };
-// const changeColor = function () {
-//   for (let i = 0; i < numOfPlayers; i++) {
-//     if (loose[i] == true) opacity0(i);
-//   }
-// };
+
 const checkStatus = function () {
   for (let i = 0; i < numOfPlayers; i++) {
     if (moneyOnTable[i] == 0 && totalMoney[i] == 0) {
@@ -107,8 +116,6 @@ const checkStatus = function () {
       loose[i] = true;
       boxIndex[i].style.opacity = 0;
       visibility(i);
-      // totalMoney[i] = undefined;
-      // moneyOnTable[i] = undefined;
       whoWinIndex[i].style.visibility = 'hidden';
       moneyOnTable[i] = undefined;
       totalMoney[i] = undefined;
@@ -118,19 +125,30 @@ const checkStatus = function () {
       greenBox(i);
     } else if (
       moneyOnTable[i] >= Math.max.apply(null, moneyOnTable) &&
-      moneyOnTable[i] != 0
+      moneyOnTable[i] != 0 &&
+      call[i] == true &&
+      readyToFinishRound[i] == true
     ) {
       greenBox(i);
     } else {
       whiteBox(i);
     }
   }
+  updateValues();
+  console.log(readyToFinishRound);
+  if (readyToFinishRound.every(element => element == true)) {
+    nextRoundButtonIndex.style.visibility = 'visible';
+  }
 };
 const greenBox = w => (boxIndex[w].style.backgroundColor = 'lightgreen');
 const whiteBox = w => (boxIndex[w].style.backgroundColor = 'white');
 const redBox = w => (boxIndex[w].style.backgroundColor = 'rgb(210, 80, 102)');
 const visibility = w => (boxIndex[w].style.visibility = 'hidden');
-
+const allColorBox = function (color) {
+  for (let i = 0; i < numOfPlayers; i++) {
+    color(i);
+  }
+};
 /////////////////////////////////////
 
 /////////////////////////////////////
@@ -174,15 +192,16 @@ callButtonIndex.forEach((buttonIndex, indexOfButton) => {
 // Raise buttons
 raiseButtonIndex.forEach((buttonIndex, indexOfButton) => {
   buttonIndex.addEventListener('click', function (e) {
+    blindAllIndex.style.visibility = 'hidden';
     e.preventDefault();
     const raiseInput = Number(raiseInputIndex[indexOfButton].value);
-    if (raiseInput > 0) {
+    if (raiseInput > Math.max.apply(null, moneyOnTable)) {
+      readyToFinishRound[indexOfButton] = true;
       console.log(raiseInput);
       raiseInputIndex[indexOfButton].value = '';
       changeMoney(raiseInput, indexOfButton);
       call[indexOfButton] = true;
       checkStatus();
-      blindAllIndex.style.visibility = 'hidden';
     }
   });
 });
@@ -195,7 +214,6 @@ allInButtonIndex.forEach((buttonIndex, indexOfButton) => {
     readyToFinishRound[indexOfButton] = true;
     allIn[indexOfButton] = true;
     checkStatus();
-    blindAllIndex.style.visibility = 'hidden';
   });
 });
 
@@ -203,10 +221,26 @@ allInButtonIndex.forEach((buttonIndex, indexOfButton) => {
 blindAllIndex.addEventListener('click', function (e) {
   e.preventDefault();
   if (moneyOnTable.indexOf(0) !== -1) {
+    readyToFinishRound = new Array(numOfPlayers).fill(true);
     totalMoney = totalMoney.map(i => i - blind);
     moneyOnTable = moneyOnTable.map(i => i + blind);
-    updateValues();
+    // updateValues();
+    checkStatus();
+    allColorBox(greenBox);
     blindAllIndex.style.visibility = 'hidden';
+  }
+});
+
+// Button Next Round
+nextRoundButtonIndex.addEventListener('click', function () {
+  allColorBox(whiteBox);
+  nextRoundButtonIndex.style.visibility = 'hidden';
+  currentPhase++;
+  currentPhaseIndex.innerHTML = `Phase: ${phases[currentPhase]}`;
+  readyToFinishRound = new Array(numOfPlayers).fill(false);
+  if (currentPhase == 4) {
+    containerWinnersIndex.style.visibility = 'visible';
+    currentPhase = -1;
   }
 });
 
@@ -220,8 +254,8 @@ whoWinIndex.forEach((buttonIndex, indexOfButton) => {
     call = new Array(numOfPlayers).fill(false);
     fold = new Array(numOfPlayers).fill(false);
     allIn = new Array(numOfPlayers).fill(false);
-    updateValues();
     checkStatus();
     blindAllIndex.style.visibility = 'visible';
+    containerWinnersIndex.style.visibility = 'hidden';
   });
 });
