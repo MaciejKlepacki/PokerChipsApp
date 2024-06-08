@@ -25,6 +25,7 @@ let whoWinIndex = [];
 // console.log(startMoney);
 
 const blind = 10;
+let blindAll = false;
 const numOfPlayers = 4;
 const playersName = ['Maciek', 'Ania', 'Zosia', 'Gocha'];
 let currentPhase = 0;
@@ -124,14 +125,16 @@ const checkStatus = function () {
     } else if (allIn[i] == true) {
       greenBox(i);
     } else if (
-      moneyOnTable[i] >= Math.max.apply(null, moneyOnTable) &&
-      moneyOnTable[i] != 0 &&
-      call[i] == true &&
-      readyToFinishRound[i] == true
+      (moneyOnTable[i] >= Math.max.apply(null, moneyOnTable) &&
+        moneyOnTable[i] != 0 &&
+        call[i] == true &&
+        readyToFinishRound[i] == true) ||
+      blindAll == true
     ) {
       greenBox(i);
     } else {
       whiteBox(i);
+      readyToFinishRound[i] = false;
     }
   }
   updateValues();
@@ -172,12 +175,14 @@ foldButtonIndex.forEach((buttonIndex, indexOfButton) => {
 callButtonIndex.forEach((buttonIndex, indexOfButton) => {
   buttonIndex.addEventListener('click', function (e) {
     e.preventDefault();
-    if (moneyOnTable[indexOfButton] >= Math.max.apply(null, moneyOnTable)) {
+    if (moneyOnTable[indexOfButton] == Math.max.apply(null, moneyOnTable)) {
       call[indexOfButton] = true;
+      readyToFinishRound[indexOfButton] = true;
     } else if (
       moneyOnTable[indexOfButton] < Math.max.apply(null, moneyOnTable)
     ) {
       call[indexOfButton] = true;
+      readyToFinishRound[indexOfButton] = true;
       console.log(Math.max.apply(null, moneyOnTable));
       changeMoney(
         Math.max.apply(null, moneyOnTable) - moneyOnTable[indexOfButton],
@@ -195,7 +200,10 @@ raiseButtonIndex.forEach((buttonIndex, indexOfButton) => {
     blindAllIndex.style.visibility = 'hidden';
     e.preventDefault();
     const raiseInput = Number(raiseInputIndex[indexOfButton].value);
-    if (raiseInput > Math.max.apply(null, moneyOnTable)) {
+    if (
+      raiseInput + moneyOnTable[indexOfButton] >
+      Math.max.apply(null, moneyOnTable)
+    ) {
       readyToFinishRound[indexOfButton] = true;
       console.log(raiseInput);
       raiseInputIndex[indexOfButton].value = '';
@@ -224,9 +232,11 @@ blindAllIndex.addEventListener('click', function (e) {
     readyToFinishRound = new Array(numOfPlayers).fill(true);
     totalMoney = totalMoney.map(i => i - blind);
     moneyOnTable = moneyOnTable.map(i => i + blind);
+    blindAll = true;
     // updateValues();
     checkStatus();
     allColorBox(greenBox);
+    blindAll = false;
     blindAllIndex.style.visibility = 'hidden';
   }
 });
