@@ -1,17 +1,23 @@
 .container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 15px;
+}
+.intro {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: 1fr 2fr 1fr 1fr 1fr;
   justify-content: center;
   align-items: center;
+  border-bottom: 2px solid black;
+  padding-bottom: 10px;
 }
-
 .box {
   display: flex;
-  height: 480px;
-  width: 280px;
+  height: min-content;
+  width: min-content;
   border: 3px solid #000;
   margin: 10px;
-  justify-content: center;
   align-items: center;
   font-size: 20px;
   flex-direction: column;
@@ -19,16 +25,29 @@
   transition: all 0.8s;
 }
 
+p {
+  margin: 5px;
+}
 h1,
 h2 {
   justify-content: center;
   align-items: center;
   display: flex;
+  margin: 12px;
 }
 
-button,
-input {
+button {
   width: 120px;
+  height: 50px;
+  cursor: pointer;
+  margin: 8px;
+  border-radius: 25px;
+  border: 1px solid black;
+  transition: box-shadow 0.3s ease;
+}
+.raise,
+input {
+  width: 60px;
   height: 50px;
   cursor: pointer;
   margin: 8px;

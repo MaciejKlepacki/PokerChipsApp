@@ -4,14 +4,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="style.css" rel="stylesheet" />
+    <title>Poker app</title>
   </head>
   <body>
-    <h1>Poker app - beta version</h1>
-    <h2 id="current-phase">Phase: Blind</h2>
-    <h1 id="current-pool">Pool: 1730</h1>
+    <div class="intro">
+      <h1>Poker app - beta version</h1>
+      <h2 id="current-phase">Phase: Blind</h2>
+      <h1 id="current-pool">Pool: 1730</h1>
+      <button id="next-round">Next phase</button>
+      <button id="blind-all">Blind all</button>
+    </div>
     <div class="container"></div>
-    <button id="next-round">Next phase</button>
-    <button id="blind-all">Blind all</button>
     <div id="container-winners">
       <h1>Who won the round?</h1>
       <div id="whoWin"></div>

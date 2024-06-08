@@ -26,6 +26,7 @@ let whoWinIndex = [];
 
 const blind = 10;
 let blindAll = false;
+// const numOfPlayers = prompt('How many players?');
 const numOfPlayers = 4;
 const playersName = ['Maciek', 'Ania', 'Zosia', 'Gocha'];
 let currentPhase = 0;
@@ -59,8 +60,8 @@ const creatingBoxes = function (x) {
     <p class="money-display" id="money-display-${i}">7834</p>
     <p class="money-on-table" id="money-on-table-${i}">1000</p>
     <button class="fold" id="fold-${i}">Fold</button>
-    <button class="call" id="call-${i}">Call/Check</button>
-    <form><input class="raise-input" id="raise-input-${i}" type="number" placeholder="Raise"/>
+    <button class="call" id="call-${i}">Call</button>
+    <form><input class="raise-input" id="raise-input-${i}" type="number"/>
     <button class="raise" id="raise-${i}">Raise</button></form>
     <button class="all-in" id="all-in-${i}">All In</button></div>`;
     whoWin += `<button id="win-button-${i}">${playersName[i]}</button>`;
@@ -129,7 +130,8 @@ const checkStatus = function () {
         moneyOnTable[i] != 0 &&
         call[i] == true &&
         readyToFinishRound[i] == true) ||
-      blindAll == true
+      blindAll == true ||
+      allIn[i] == true
     ) {
       greenBox(i);
     } else {
@@ -139,6 +141,7 @@ const checkStatus = function () {
   }
   updateValues();
   console.log(readyToFinishRound);
+  console.log(allIn);
   if (readyToFinishRound.every(element => element == true)) {
     nextRoundButtonIndex.style.visibility = 'visible';
   }
@@ -166,6 +169,7 @@ foldButtonIndex.forEach((buttonIndex, indexOfButton) => {
   buttonIndex.addEventListener('click', function (e) {
     e.preventDefault();
     readyToFinishRound[indexOfButton] = true;
+
     fold[indexOfButton] = true;
     checkStatus();
   });
@@ -181,13 +185,21 @@ callButtonIndex.forEach((buttonIndex, indexOfButton) => {
     } else if (
       moneyOnTable[indexOfButton] < Math.max.apply(null, moneyOnTable)
     ) {
-      call[indexOfButton] = true;
-      readyToFinishRound[indexOfButton] = true;
-      console.log(Math.max.apply(null, moneyOnTable));
-      changeMoney(
-        Math.max.apply(null, moneyOnTable) - moneyOnTable[indexOfButton],
-        indexOfButton
-      );
+      if (
+        moneyOnTable[indexOfButton] + totalMoney[indexOfButton] >
+        Math.max.apply(null, moneyOnTable)
+      ) {
+        call[indexOfButton] = true;
+        readyToFinishRound[indexOfButton] = true;
+        changeMoney(
+          Math.max.apply(null, moneyOnTable) - moneyOnTable[indexOfButton],
+          indexOfButton
+        );
+      } else {
+        allIn[indexOfButton] = true;
+        changeMoney(totalMoney[indexOfButton], indexOfButton);
+        readyToFinishRound[indexOfButton] = true;
+      }
     }
     updateValues();
     checkStatus();
@@ -200,16 +212,18 @@ raiseButtonIndex.forEach((buttonIndex, indexOfButton) => {
     blindAllIndex.style.visibility = 'hidden';
     e.preventDefault();
     const raiseInput = Number(raiseInputIndex[indexOfButton].value);
-    if (
-      raiseInput + moneyOnTable[indexOfButton] >
-      Math.max.apply(null, moneyOnTable)
-    ) {
-      readyToFinishRound[indexOfButton] = true;
-      console.log(raiseInput);
-      raiseInputIndex[indexOfButton].value = '';
-      changeMoney(raiseInput, indexOfButton);
-      call[indexOfButton] = true;
-      checkStatus();
+    if (raiseInput > 0 && raiseInput <= totalMoney[indexOfButton]) {
+      if (
+        raiseInput + moneyOnTable[indexOfButton] >
+        Math.max.apply(null, moneyOnTable)
+      ) {
+        readyToFinishRound[indexOfButton] = true;
+        console.log(raiseInput);
+        raiseInputIndex[indexOfButton].value = '';
+        changeMoney(raiseInput, indexOfButton);
+        call[indexOfButton] = true;
+        checkStatus();
+      }
     }
   });
 });
@@ -243,15 +257,21 @@ blindAllIndex.addEventListener('click', function (e) {
 
 // Button Next Round
 nextRoundButtonIndex.addEventListener('click', function () {
-  allColorBox(whiteBox);
-  nextRoundButtonIndex.style.visibility = 'hidden';
+  for (let i = 0; i < numOfPlayers; i++) {
+    if (allIn[i] == true || fold[i] == true) {
+      readyToFinishRound[i] = true;
+    } else {
+      readyToFinishRound[i] = false;
+    }
+  }
   currentPhase++;
+  nextRoundButtonIndex.style.visibility = 'hidden';
   currentPhaseIndex.innerHTML = `Phase: ${phases[currentPhase]}`;
-  readyToFinishRound = new Array(numOfPlayers).fill(false);
   if (currentPhase == 4) {
     containerWinnersIndex.style.visibility = 'visible';
     currentPhase = -1;
   }
+  checkStatus();
 });
 
 // Who won the round?
@@ -260,12 +280,14 @@ whoWinIndex.forEach((buttonIndex, indexOfButton) => {
     e.preventDefault();
     totalMoney[indexOfButton] += pool;
     pool = 0;
-    moneyOnTable = new Array(numOfPlayers).fill(0);
     call = new Array(numOfPlayers).fill(false);
     fold = new Array(numOfPlayers).fill(false);
     allIn = new Array(numOfPlayers).fill(false);
+    moneyOnTable = new Array(numOfPlayers).fill(0);
     checkStatus();
     blindAllIndex.style.visibility = 'visible';
     containerWinnersIndex.style.visibility = 'hidden';
+    currentPhase++;
+    currentPhaseIndex.innerHTML = `Phase: ${phases[currentPhase]}`;
   });
 });
