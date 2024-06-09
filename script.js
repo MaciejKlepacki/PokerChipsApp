@@ -140,8 +140,6 @@ const checkStatus = function () {
     }
   }
   updateValues();
-  console.log(readyToFinishRound);
-  console.log(allIn);
   if (readyToFinishRound.every(element => element == true)) {
     nextRoundButtonIndex.style.visibility = 'visible';
   }
@@ -169,7 +167,11 @@ foldButtonIndex.forEach((buttonIndex, indexOfButton) => {
   buttonIndex.addEventListener('click', function (e) {
     e.preventDefault();
     readyToFinishRound[indexOfButton] = true;
-
+    foldButtonIndex[indexOfButton].style.visibility = 'hidden';
+    callButtonIndex[indexOfButton].style.visibility = 'hidden';
+    raiseInputIndex[indexOfButton].style.visibility = 'hidden';
+    raiseButtonIndex[indexOfButton].style.visibility = 'hidden';
+    allInButtonIndex[indexOfButton].style.visibility = 'hidden';
     fold[indexOfButton] = true;
     checkStatus();
   });
@@ -199,6 +201,11 @@ callButtonIndex.forEach((buttonIndex, indexOfButton) => {
         allIn[indexOfButton] = true;
         changeMoney(totalMoney[indexOfButton], indexOfButton);
         readyToFinishRound[indexOfButton] = true;
+        foldButtonIndex[indexOfButton].style.visibility = 'hidden';
+        callButtonIndex[indexOfButton].style.visibility = 'hidden';
+        raiseInputIndex[indexOfButton].style.visibility = 'hidden';
+        raiseButtonIndex[indexOfButton].style.visibility = 'hidden';
+        allInButtonIndex[indexOfButton].style.visibility = 'hidden';
       }
     }
     updateValues();
@@ -236,6 +243,11 @@ allInButtonIndex.forEach((buttonIndex, indexOfButton) => {
     readyToFinishRound[indexOfButton] = true;
     allIn[indexOfButton] = true;
     checkStatus();
+    foldButtonIndex[indexOfButton].style.visibility = 'hidden';
+    callButtonIndex[indexOfButton].style.visibility = 'hidden';
+    raiseInputIndex[indexOfButton].style.visibility = 'hidden';
+    raiseButtonIndex[indexOfButton].style.visibility = 'hidden';
+    allInButtonIndex[indexOfButton].style.visibility = 'hidden';
   });
 });
 
@@ -269,6 +281,10 @@ nextRoundButtonIndex.addEventListener('click', function () {
   currentPhaseIndex.innerHTML = `Phase: ${phases[currentPhase]}`;
   if (currentPhase == 4) {
     containerWinnersIndex.style.visibility = 'visible';
+    for (let i = 0; i < numOfPlayers; i++) {
+      if (fold[i] == true) whoWinIndex[i].style.visibility = 'hidden';
+      else whoWinIndex[i].style.visibility = 'visible';
+    }
     currentPhase = -1;
   }
   checkStatus();
@@ -286,8 +302,16 @@ whoWinIndex.forEach((buttonIndex, indexOfButton) => {
     moneyOnTable = new Array(numOfPlayers).fill(0);
     checkStatus();
     blindAllIndex.style.visibility = 'visible';
-    containerWinnersIndex.style.visibility = 'hidden';
     currentPhase++;
     currentPhaseIndex.innerHTML = `Phase: ${phases[currentPhase]}`;
+    for (let i = 0; i < numOfPlayers; i++) {
+      foldButtonIndex[i].style.visibility = 'visible';
+      callButtonIndex[i].style.visibility = 'visible';
+      raiseInputIndex[i].style.visibility = 'visible';
+      raiseButtonIndex[i].style.visibility = 'visible';
+      allInButtonIndex[i].style.visibility = 'visible';
+      whoWinIndex[i].style.visibility = 'hidden';
+    }
+    containerWinnersIndex.style.visibility = 'hidden';
   });
 });
