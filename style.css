@@ -31,7 +31,7 @@
   font-size: 20px;
   flex-direction: column;
   border-radius: 30px;
-  transition: all 0.8s;
+  transition: all 1s;
 }
 
 p {
@@ -57,7 +57,44 @@ button {
   border-radius: 25px;
   border: 1px solid black;
   transition: box-shadow 0.3s ease;
+  background-color: #fbeee0;
+  border: 2px solid #422800;
+  box-shadow: #422800 2px 3px 0 0;
 }
+
+/* CSS */
+/* .button-74 {
+  border-radius: 30px;
+  color: #422800;
+  cursor: pointer;
+  display: inline-block;
+  font-weight: 600;
+  font-size: 18px;
+  padding: 0 18px;
+  line-height: 50px;
+  text-align: center;
+  text-decoration: none;
+  user-select: none;
+  -webkit-user-select: none;
+} */
+
+button:hover {
+  background-color: #fff;
+}
+
+button:active {
+  box-shadow: #422800 2px 2px 0 0;
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 0;
+  transition: all 0.08s;
+}
+
+/* @media (min-width: 768px) {
+  .button-74 {
+    min-width: 120px;
+    padding: 0 25px;
+  }
+} */
 .raise,
 input {
   width: 60px;
@@ -69,14 +106,26 @@ input {
   transition: box-shadow 0.3s ease;
 }
 
-button:hover {
+body,
+html {
+  font-family: 'Nunito Sans', sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 620;
+  font-style: normal;
+  height: 100%;
+  font-variation-settings: 'wdth' 100, 'YTLC' 500;
+  background-color: #8ec5fc;
+  background-image: linear-gradient(62deg, #8ec5fc 0%, #e0c3fc 100%);
+}
+
+ton:hover {
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-body {
-  font-family: Georgia, 'Times New Roman', Times, serif;
-  /* color: rgb(210, 80, 102); */
-}
+/* body {
+  font-family: Georgia, 'Times New Roman', Times, serif; */
+/* color: rgb(210, 80, 102);
+} */
 
 #whoWin {
   justify-content: center;
