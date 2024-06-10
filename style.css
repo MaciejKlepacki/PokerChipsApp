@@ -9,6 +9,10 @@
   color: white;
 } */
 
+.money {
+  display: flex;
+  flex-direction: row;
+}
 .intro {
   display: grid;
   grid-template-columns: 1fr 2fr 1fr 1fr 1fr;
@@ -31,7 +35,11 @@
 }
 
 p {
-  margin: 5px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+.money-display {
+  margin-right: 50px;
 }
 h1,
 h2 {

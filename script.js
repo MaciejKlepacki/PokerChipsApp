@@ -19,6 +19,7 @@ let raiseInputIndex = [];
 let raiseButtonIndex = [];
 let allInButtonIndex = [];
 let whoWinIndex = [];
+let lastActionIndex = [];
 
 // setting amount of money on the start
 // const startMoney = prompt('How much money do you want?')
@@ -28,7 +29,10 @@ const blind = 10;
 let blindAll = false;
 // const numOfPlayers = prompt('How many players?');
 const numOfPlayers = 4;
-const playersName = ['Maciek', 'Ania', 'Zosia', 'Gocha'];
+let playersName = ['asdf', 'qwerty', 'tyui', 'lkjh'];
+// for (let i = 0; i < numOfPlayers; i++) {
+//   playersName[i] = String(prompt(`What's the name of ${i + 1} player?`));
+// }
 let currentPhase = 0;
 const phases = [
   'Blind',
@@ -57,8 +61,11 @@ const creatingBoxes = function (x) {
     containerHTML += `<div class="box" id="player-${i}">
     <!--PLAYER ${i} -->
     <p>${playersName[i]}</p>
-    <p class="money-display" id="money-display-${i}">7834</p>
-    <p class="money-on-table" id="money-on-table-${i}">1000</p>
+    <div class='money'>
+      <p class="money-display" id="money-display-${i}">7834</p>
+      <p class="money-on-table" id="money-on-table-${i}">1000</p>
+      </div>
+    <p id="last-action-${i}">Raised</p>
     <button class="fold" id="fold-${i}">Fold</button>
     <button class="call" id="call-${i}">Call</button>
     <form><input class="raise-input" id="raise-input-${i}" type="number"/>
@@ -80,6 +87,7 @@ const creatingBoxes = function (x) {
     raiseInputIndex.push(document.getElementById(`raise-input-${i}`));
     raiseButtonIndex.push(document.getElementById(`raise-${i}`));
     allInButtonIndex.push(document.getElementById(`all-in-${i}`));
+    lastActionIndex.push(document.getElementById(`last-action-${i}`));
   }
 };
 
@@ -109,11 +117,21 @@ const gameStart = function () {
   containerWinnersIndex.style.visibility = 'hidden';
   nextRoundButtonIndex.style.visibility = 'hidden';
   poolDisplayFunction(pool);
+  for (let i = 0; i < numOfPlayers; i++) {
+    lastActionIndex[i].innerHTML = '-';
+  }
+};
+const buttonsVisibility = function (buttonIndexes, x) {
+  foldButtonIndex[buttonIndexes].style.visibility = x;
+  callButtonIndex[buttonIndexes].style.visibility = x;
+  raiseInputIndex[buttonIndexes].style.visibility = x;
+  raiseButtonIndex[buttonIndexes].style.visibility = x;
+  allInButtonIndex[buttonIndexes].style.visibility = x;
 };
 
 const checkStatus = function () {
   for (let i = 0; i < numOfPlayers; i++) {
-    if (moneyOnTable[i] == 0 && totalMoney[i] == 0) {
+    if (moneyOnTable[i] <= 0 && totalMoney[i] <= 0) {
       //loose
       loose[i] = true;
       boxIndex[i].style.opacity = 0;
@@ -123,8 +141,7 @@ const checkStatus = function () {
       totalMoney[i] = undefined;
     } else if (fold[i] == true) {
       redBox(i);
-    } else if (allIn[i] == true) {
-      greenBox(i);
+      lastActionIndex[i].innerHTML = 'folded';
     } else if (
       (moneyOnTable[i] >= Math.max.apply(null, moneyOnTable) &&
         moneyOnTable[i] != 0 &&
@@ -134,19 +151,31 @@ const checkStatus = function () {
       allIn[i] == true
     ) {
       greenBox(i);
+      buttonsVisibility(i, 'hidden');
     } else {
       whiteBox(i);
       readyToFinishRound[i] = false;
+      buttonsVisibility(i, 'visible');
     }
   }
   updateValues();
-  if (readyToFinishRound.every(element => element == true)) {
-    nextRoundButtonIndex.style.visibility = 'visible';
+  if (currentPhase == 4) {
+    containerWinnersIndex.style.visibility = 'visible';
+    nextRoundButtonIndex.style.visibility = 'hidden';
+    for (let i = 0; i < numOfPlayers; i++) {
+      if (fold[i] == true) whoWinIndex[i].style.visibility = 'hidden';
+      else whoWinIndex[i].style.visibility = 'visible';
+    }
+    currentPhase = -1;
+  } else {
+    if (readyToFinishRound.every(element => element == true)) {
+      nextRoundButtonIndex.style.visibility = 'visible';
+    }
   }
 };
-const greenBox = w => (boxIndex[w].style.backgroundColor = 'lightgreen');
+const greenBox = w => (boxIndex[w].style.backgroundColor = 'lightGreen');
 const whiteBox = w => (boxIndex[w].style.backgroundColor = 'white');
-const redBox = w => (boxIndex[w].style.backgroundColor = 'rgb(210, 80, 102)');
+const redBox = w => (boxIndex[w].style.backgroundColor = 'salmon');
 const visibility = w => (boxIndex[w].style.visibility = 'hidden');
 const allColorBox = function (color) {
   for (let i = 0; i < numOfPlayers; i++) {
@@ -167,11 +196,7 @@ foldButtonIndex.forEach((buttonIndex, indexOfButton) => {
   buttonIndex.addEventListener('click', function (e) {
     e.preventDefault();
     readyToFinishRound[indexOfButton] = true;
-    foldButtonIndex[indexOfButton].style.visibility = 'hidden';
-    callButtonIndex[indexOfButton].style.visibility = 'hidden';
-    raiseInputIndex[indexOfButton].style.visibility = 'hidden';
-    raiseButtonIndex[indexOfButton].style.visibility = 'hidden';
-    allInButtonIndex[indexOfButton].style.visibility = 'hidden';
+    buttonsVisibility(indexOfButton, 'hidden');
     fold[indexOfButton] = true;
     checkStatus();
   });
@@ -201,11 +226,7 @@ callButtonIndex.forEach((buttonIndex, indexOfButton) => {
         allIn[indexOfButton] = true;
         changeMoney(totalMoney[indexOfButton], indexOfButton);
         readyToFinishRound[indexOfButton] = true;
-        foldButtonIndex[indexOfButton].style.visibility = 'hidden';
-        callButtonIndex[indexOfButton].style.visibility = 'hidden';
-        raiseInputIndex[indexOfButton].style.visibility = 'hidden';
-        raiseButtonIndex[indexOfButton].style.visibility = 'hidden';
-        allInButtonIndex[indexOfButton].style.visibility = 'hidden';
+        buttonsVisibility(indexOfButton, 'hidden');
       }
     }
     updateValues();
@@ -243,11 +264,7 @@ allInButtonIndex.forEach((buttonIndex, indexOfButton) => {
     readyToFinishRound[indexOfButton] = true;
     allIn[indexOfButton] = true;
     checkStatus();
-    foldButtonIndex[indexOfButton].style.visibility = 'hidden';
-    callButtonIndex[indexOfButton].style.visibility = 'hidden';
-    raiseInputIndex[indexOfButton].style.visibility = 'hidden';
-    raiseButtonIndex[indexOfButton].style.visibility = 'hidden';
-    allInButtonIndex[indexOfButton].style.visibility = 'hidden';
+    buttonsVisibility(indexOfButton, 'hidden');
   });
 });
 
@@ -259,7 +276,10 @@ blindAllIndex.addEventListener('click', function (e) {
     totalMoney = totalMoney.map(i => i - blind);
     moneyOnTable = moneyOnTable.map(i => i + blind);
     blindAll = true;
-    // updateValues();
+    for (let i = 0; i < numOfPlayers; i++) {
+      buttonsVisibility(i, 'hidden');
+      lastActionIndex[i].innerHTML = 'Blind';
+    }
     checkStatus();
     allColorBox(greenBox);
     blindAll = false;
@@ -267,7 +287,7 @@ blindAllIndex.addEventListener('click', function (e) {
   }
 });
 
-// Button Next Round
+// Button Next Phase
 nextRoundButtonIndex.addEventListener('click', function () {
   for (let i = 0; i < numOfPlayers; i++) {
     if (allIn[i] == true || fold[i] == true) {
@@ -279,18 +299,11 @@ nextRoundButtonIndex.addEventListener('click', function () {
   currentPhase++;
   nextRoundButtonIndex.style.visibility = 'hidden';
   currentPhaseIndex.innerHTML = `Phase: ${phases[currentPhase]}`;
-  if (currentPhase == 4) {
-    containerWinnersIndex.style.visibility = 'visible';
-    for (let i = 0; i < numOfPlayers; i++) {
-      if (fold[i] == true) whoWinIndex[i].style.visibility = 'hidden';
-      else whoWinIndex[i].style.visibility = 'visible';
-    }
-    currentPhase = -1;
-  }
+
   checkStatus();
 });
 
-// Who won the round?
+// TODO: Who won the round?
 whoWinIndex.forEach((buttonIndex, indexOfButton) => {
   buttonIndex.addEventListener('click', function (e) {
     e.preventDefault();
@@ -300,18 +313,15 @@ whoWinIndex.forEach((buttonIndex, indexOfButton) => {
     fold = new Array(numOfPlayers).fill(false);
     allIn = new Array(numOfPlayers).fill(false);
     moneyOnTable = new Array(numOfPlayers).fill(0);
+    for (let i = 0; i < numOfPlayers; i++) {
+      whoWinIndex[i].style.visibility = 'hidden';
+      moneyOnTable[i] = 0;
+      buttonsVisibility(i, 'visible');
+    }
     checkStatus();
     blindAllIndex.style.visibility = 'visible';
     currentPhase++;
     currentPhaseIndex.innerHTML = `Phase: ${phases[currentPhase]}`;
-    for (let i = 0; i < numOfPlayers; i++) {
-      foldButtonIndex[i].style.visibility = 'visible';
-      callButtonIndex[i].style.visibility = 'visible';
-      raiseInputIndex[i].style.visibility = 'visible';
-      raiseButtonIndex[i].style.visibility = 'visible';
-      allInButtonIndex[i].style.visibility = 'visible';
-      whoWinIndex[i].style.visibility = 'hidden';
-    }
     containerWinnersIndex.style.visibility = 'hidden';
   });
 });
