@@ -86,11 +86,11 @@ const creatingBoxes = function (x) {
       <p class="money-on-table" id="money-on-table-${i}">1000</p>
       </div>
     <p id="last-action-${i}">Raised</p>
-    <button class="fold" id="fold-${i}">Fold</button>
-    <button class="call" id="call-${i}">Call</button>
+    <button class="fold" id="fold-${i}">FOLD</button>
+    <button class="call" id="call-${i}">CALL/CHECK</button>
     <form><input class="raise-input" id="raise-input-${i}" type="number"/>
-    <button class="raise" id="raise-${i}">Raise</button></form>
-    <button class="all-in" id="all-in-${i}">All In</button></div>`;
+    <button class="raise" id="raise-${i}">RAISE</button></form>
+    <button class="all-in" id="all-in-${i}">ALL IN</button></div>`;
     whoWin += `<button id="win-button-${i}">${playersName[i]}</button>`;
   }
   containerIndex.innerHTML = containerHTML;
@@ -130,15 +130,16 @@ const summingPool = () => {
     return sum;
   }, 0);
 };
-const poolDisplayFunction = x => (poolDisplayIndex.innerHTML = `Pool: ${x}`);
+const poolDisplayFunction = x => (poolDisplayIndex.innerHTML = `POT: ${x}`);
 const gameStart = function () {
   pool = 0;
   updateValues();
   blindAllIndex.style.visibility = 'visible';
+  blindAllIndex.innerHTML = `BLIND ALL (${blind})`;
   poolDisplayIndex.style.visibility = 'visible';
   poolDisplayFunction(pool);
   allColorBox(whiteBox);
-  currentPhaseIndex.innerHTML = `Phase: ${phases[currentPhase]}`;
+  currentPhaseIndex.innerHTML = `PHASE: ${phases[currentPhase]}`;
   for (let i = 0; i < numOfPlayers; i++) {
     lastActionIndex[i].innerHTML = '-';
   }
@@ -201,6 +202,8 @@ const checkStatus = function () {
     buttonsVisibility(t, 'hidden');
     lastActionIndex[t].innerHTML = 'Winner';
     boxIndex[t].style.backgroundColor = 'yellow';
+    blindAllIndex.style.visibility = 'hidden';
+    nextRoundButtonIndex.style.visibility = 'hidden';
   }
   looseCount = 0;
 };
