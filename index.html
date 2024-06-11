@@ -7,18 +7,28 @@
     <title>Poker app</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap" rel="stylesheet" />
   </head>
   <body>
     <div class="intro">
       <h1>Poker app - beta version</h1>
-      <h2 id="current-phase">Phase: Blind</h2>
-      <h1 id="current-pool">Pool: 1730</h1>
+      <h2 id="current-phase">Phase: Settings</h2>
+      <h1 id="current-pool">Pool: 0</h1>
       <button id="next-round">Next phase</button>
       <button id="blind-all">Blind all</button>
+    </div>
+    <div class="all-start">
+      <div class="start-input">
+        <h2 id="information-input">Set the amount of MONEY ON THE START of the game (grater than 0):</h2>
+        <form><input type="text" class="start-input-input" /><button id="submit-button">submit</button></form>
+      </div>
+      <div class="settings">
+        <h2 id="money-on-start-setting">Money on start:</h2>
+        <h2 id="blind-setting">Blind:</h2>
+        <h2 id="number-of-players-setting">Number of players:</h2>
+        <h2 id="names-of-players-setting">Names:</h2>
+        <h2><button id="start-game-button">START GAME</button></h2>
+      </div>
     </div>
     <div class="container"></div>
     <div id="container-winners">

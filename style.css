@@ -4,15 +4,12 @@
   flex-wrap: wrap;
   margin-top: 15px;
 }
-/* .dark-mode {
-  background-color: #000;
-  color: white;
-} */
 
 .money {
   display: flex;
   flex-direction: row;
 }
+
 .intro {
   display: grid;
   grid-template-columns: 1fr 2fr 1fr 1fr 1fr;
@@ -21,6 +18,53 @@
   border-bottom: 2px solid black;
   padding-bottom: 10px;
 }
+.start-input {
+  display: grid;
+  justify-content: center;
+  align-items: center;
+
+  grid-template-columns: 3fr 2fr;
+  /* flex-wrap: wrap; */
+  margin-top: 15px;
+}
+
+.start-input-input {
+  padding-left: 8px;
+  width: 60%;
+  font-size: 18px;
+  border: 2px solid black;
+}
+
+.settings {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  margin-top: 15px;
+}
+
+#start-game-button {
+  width: 180px;
+  height: 70px;
+  background-color: #fbeee0;
+  font-size: large;
+  box-shadow: #422800 4px 5px 0 0;
+}
+#start-game-button:active {
+  box-shadow: #422800 4px 5px 0 0;
+  transform: translate(4px, 5px);
+  box-shadow: 0 0 0 0;
+  transition: all 0.08s;
+}
+#start-game-button:hover {
+  background-color: yellowgreen;
+}
+
+button-start-game-div {
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+
 .box {
   display: flex;
   height: min-content;
@@ -38,9 +82,15 @@ p {
   margin-top: 5px;
   margin-bottom: 5px;
 }
+
 .money-display {
   margin-right: 50px;
 }
+
+.money-on-table {
+  color: #5887d8;
+}
+
 h1,
 h2 {
   justify-content: center;
@@ -62,22 +112,6 @@ button {
   box-shadow: #422800 2px 3px 0 0;
 }
 
-/* CSS */
-/* .button-74 {
-  border-radius: 30px;
-  color: #422800;
-  cursor: pointer;
-  display: inline-block;
-  font-weight: 600;
-  font-size: 18px;
-  padding: 0 18px;
-  line-height: 50px;
-  text-align: center;
-  text-decoration: none;
-  user-select: none;
-  -webkit-user-select: none;
-} */
-
 button:hover {
   background-color: #fff;
 }
@@ -89,12 +123,6 @@ button:active {
   transition: all 0.08s;
 }
 
-/* @media (min-width: 768px) {
-  .button-74 {
-    min-width: 120px;
-    padding: 0 25px;
-  }
-} */
 .raise,
 input {
   width: 60px;
@@ -104,6 +132,7 @@ input {
   border-radius: 25px;
   border: 1px solid black;
   transition: box-shadow 0.3s ease;
+  padding-left: 3px;
 }
 
 body,
@@ -118,13 +147,8 @@ html {
   background-image: linear-gradient(62deg, #8ec5fc 0%, #e0c3fc 100%);
 }
 
-ton:hover {
+/* ton:hover {
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-/* body {
-  font-family: Georgia, 'Times New Roman', Times, serif; */
-/* color: rgb(210, 80, 102);
 } */
 
 #whoWin {
